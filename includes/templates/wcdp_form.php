@@ -30,7 +30,7 @@ $theme_classes = $theme === 2 ? 'wcdp-theme-2 wcdp-theme-modern' : 'wcdp-theme-1
 // Encapsulate donation form in a popup?
 if ( $value['popup'] ) :
 	?>
-	<div id="wcdp-form" class="wcdp-overlay">
+	<div id="wcdp-form" class="wcdp-overlay <?php echo function_exists( 'wcdpp_donation_reminder_is_enabled' ) && wcdpp_donation_reminder_is_enabled() ? 'wcdpp-donation-reminder-enabled' : ''; ?>">
 		<div id="wcdp-cancel" class="wcdp-modal-close"></div>
 		<div id="wcdp-popup" class="wcdp-popup">
 			<div aria-label="<?php esc_html_e( 'Close', 'wc-donation-platform' ); ?>" class="wcdp-close wcdp-modal-close">
@@ -39,6 +39,7 @@ if ( $value['popup'] ) :
 				</svg>
 			</div>
 			<div class="wcdp">
+			<?php do_action( 'wcdp_popup_before_form', $product_id, $context ); ?>
 			<?php endif; ?>
 
 			<div class="wc-donation-platform woocommerce wcdp-form <?php echo esc_attr( $theme_classes . ' ' . $value['className'] ); ?>"

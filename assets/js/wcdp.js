@@ -118,6 +118,14 @@
 		}
 
 		if ( checkFormValidity( formElement, showValidationMessage ) ) {
+			const beforeSubmit = new CustomEvent( 'wcdp_before_step_submit', {
+				cancelable: true,
+				detail: { form: formElement, step },
+			} );
+			if ( ! document.dispatchEvent( beforeSubmit ) ) {
+				return;
+			}
+
 			const spinner = formElement.querySelector( '#wcdp-spinner' );
 			const ajaxButton = formElement.querySelector( '#wcdp-ajax-button' );
 			if ( spinner ) {
@@ -696,7 +704,22 @@
 
 	//Close modal when clicking on the close button
 	document.querySelectorAll( '.wcdp-modal-close' ).forEach( ( button ) => {
-		button.addEventListener( 'click', closePopupForm );
+		button.addEventListener( 'click', ( event ) => {
+			const overlay = event.currentTarget.closest( '.wcdp-overlay' );
+			const reminder = overlay?.querySelector( '.wcdpp-donation-reminder' );
+			if ( reminder && ! reminder.hidden ) {
+				closePopupForm();
+				return;
+			}
+			if ( reminder ) {
+				event.preventDefault();
+				overlay.querySelector( '.wcdp-popup' )?.classList.add( 'wcdpp-show-reminder' );
+				reminder.hidden = false;
+				overlay.querySelector( '.wcdp-form' )?.setAttribute( 'aria-hidden', 'true' );
+				return;
+			}
+			closePopupForm();
+		} );
 	} );
 
 	let wcdpOpen = false;
